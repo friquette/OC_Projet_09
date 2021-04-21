@@ -1,0 +1,27 @@
+{% extends 'base_generic.html' %}
+
+{% block content %}
+    <h1>Inscrivez-vous</h1>
+
+    {% for message in messages %}
+        <p>{{ message }}</p>
+    {% endfor %}
+    <form method="post" action="register">
+        {% csrf_token %}
+        <table>
+             <tr>
+                <td>Identifiant: </td>
+                <td><input type="text" name="username"></td>
+            </tr>
+            <tr>
+                <td>Mot de passe: </td>
+                <td><input type="password" name="password1"></td>
+            </tr>
+            <tr>
+                <td>Confirmez mot de passe: </td>
+                <td><input type="password" name="password2"></td>
+            </tr>
+        </table>
+        <input type="submit" value="Créer un compte">
+    </form>
+{% endblock %}

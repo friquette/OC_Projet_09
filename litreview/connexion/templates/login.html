@@ -2,7 +2,15 @@
 
 {% block content %}
     <h1>Inscrivez-vous</h1>
-    <a href="{% url 'inscription' %}">S'inscrire</a>
+
+    {% if not user.is_authenticated %}
+        <a href="{% url 'register' %}">S'inscrire</a>
+    {% endif %}
+
+    {% if user.is_authenticated %}
+        <p>Vous êtes connecté, {{ user.username }}</p>
+    <a href="{% url 'logout' %}">Se déconnecter</a>
+    {% endif %}
 
     {% if form.errors %}
         <p>Votre identifiant ou mot de passe sont incorrects.</p>
@@ -16,16 +24,19 @@
         {% endif %}
     {% endif %}
 
+    {% for message in messages %}
+        <p>{{ message }}</p>
+    {% endfor %}
     <form method="post" action="{% url 'login' %}">
         {% csrf_token %}
         <table>
             <tr>
-                <td>{{ form.username.label_tag }}</td>
-                <td>{{ form.username }}</td>
+                <td>Identifiant: </td>
+                <td><input type="text" name="username"></td>
             </tr>
             <tr>
-                <td>{{ form.password.label_tag }}</td>
-                <td>{{ form.password }}</td>
+                <td>Mot de passe: </td>
+                <td><input type="password" name="password"></td>
             </tr>
         </table>
         <input type="submit" value="Se connecter">
