@@ -1,9 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
-from django.views import generic
 
 
 def log_in(request):
@@ -14,7 +12,7 @@ def log_in(request):
         user = authenticate(username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('/')
+            return redirect('flux')
         else:
             messages.info(request, 'Identifiant ou mot de passe incorrects.')
             return redirect('/')
