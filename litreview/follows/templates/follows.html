@@ -1,0 +1,45 @@
+{% extends 'base_generic.html' %}
+
+{% block header %}
+    {% if user.is_authenticated %}
+        <a href="{% url 'flux' %}">Flux</a> |
+        <a href="">Posts</a> |
+        <a href="">Abonnements</a> |
+        <a href="{% url 'logout' %}">Se déconnecter</a>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {% for message in messages %}
+        <p>{{ message }}</p>
+    {% endfor %}
+    <form method="post" action="{% url 'follows' %}">
+        {% csrf_token %}
+        <table>
+             <tr>
+                <td>Suivre: </td>
+                <td><input type="text" name="username"></td>
+            </tr>
+        </table>
+        <input type="submit" value="Suivre">
+    </form>
+
+    <div>
+        <table>
+            <tr>
+                {% if follows %}
+                    <td> Vous suivez: </td>
+            </tr>
+                    {% for f in follows %}
+            <tr>
+                        <td>{{ f }}</td>
+            </tr>
+                    {% endfor %}
+            <tr>
+                {% else %}
+                    <td>Vous ne suivez personne.</td>
+                {% endif %}
+            </tr>
+        </table>
+    </div>
+{% endblock %}

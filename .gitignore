@@ -1,3 +1,6 @@
 env
-*/__pycache__
+**/__pycache__
 *.jpg
+.idea
+.vscode
+source_to_models.py
