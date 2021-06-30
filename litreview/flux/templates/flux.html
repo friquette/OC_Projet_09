@@ -1,14 +1,5 @@
-{% extends 'base_generic.html' %}
+{% extends 'header_generic.html' %}
 {% load static %}
-
-{% block header %}
-    {% if user.is_authenticated %}
-        <a href="">Flux</a> |
-        <a href="">Posts</a> |
-        <a href="{% url 'follows' %}">Abonnements</a> |
-        <a href="{% url 'logout' %}">Se déconnecter</a>
-    {% endif %}
-{% endblock %}
 
 {% block content %}
     {% if not user.is_authenticated %}
@@ -16,14 +7,37 @@
     {% else %}
         <h2>Bienvenue sur votre flux.</h2>
         <a href="{% url 'ticket' %}">Demander une critique</a> | <a href="{% url 'review' %}">Créer une critique</a>
-        {% for tik in ticket %}
-            {% if tik.user in users %}
-                <h4>{{ tik.title }}</h4>
-                <p>{{ tik.description }}</p>
-                <p>{{ tik.user }}</p>
-                <p>{{ tik.image }}</p>
-                <img src="{{ tik.image }}">
-                <p>{{ tik.time_created }}</p>
+        
+        {% for item in items %}
+            {% if item.headline is None %}
+                {% if item.user in users %}
+                    <div>
+                        <p>{{ item.user}} a demandé une critique</p>
+                        <h4>{{ item.title }}</h4>
+                        <p>{{ item.description }}</p>
+                        <p>{{ item.image }}</p>
+                        <img src="{{ item.image }}">
+                        <p>{{ item.time_created }}</p>
+                        <form method="post" action="update">
+                            {% csrf_token %}
+                            <input type="hidden" name="id" value="{{ item.id }}">
+                            <input type="submit" name="create_review" value="Créer une critique">
+                        </form>
+                    </div>
+                {% endif %}
+            {% else %}
+                <div>
+                    <h5>Vous avez publié une critique</h3>
+                    <h4>{{ item.headline }} - {{ item.rating }}</h4>
+                    <p>{{ item.body }}</p>
+                    <p>{{ item.time_created }}</p>
+                    <div>
+                        <p>Ticket - {{ item.ticket.user }}</p>
+                        <p>{{ item.ticket.title }}</p>
+                        <p>{{ item.ticket.image }}</p>
+                        <img src="{{ item.ticket.image }}">
+                    </div>
+                </div>
             {% endif %}
         {% endfor %}
     {% endif %}

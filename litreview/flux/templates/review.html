@@ -1,17 +1,67 @@
-{% extends 'base_generic.html' %}
+{% extends 'header_generic.html' %}
 {% load static %}
-
-{% block header %}
-    {% if user.is_authenticated %}
-        <a href="">Flux</a> |
-        <a href="">Posts</a> |
-        <a href="{% url 'follows' %}">Abonnements</a> |
-        <a href="{% url 'logout' %}">Se déconnecter</a>
-    {% endif %}
-{% endblock %}
 
 {% block content %}
     {% if not user.is_authenticated %}
         <p>Veuillez <a href="../">vous connecter</a> pour accéder à ce contenu.</p>
     {% endif %}
+
+    <h1>Créez une critique</h1>
+
+    {% for message in messages %}
+        <p>{{ message }}</p>
+    {% endfor %}
+
+    <form method="post" action="{% url 'review' %}">
+        {% csrf_token %}
+        <table>
+            <h3>Ticket</h3>
+             <tr>
+                <td>Titre: </td>
+                <td><input type="text" name="title"></td>
+            </tr>
+            <tr>
+                <td>Description: </td>
+                <td>
+                    <textarea rows="5" cols="70" name="description"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td>Image: </td>
+                <td><input type="file" accept=".jpg, .png" name="image"></td>
+            </tr>
+        </table>
+        <table>
+            <h3>Critique</h3>
+            <tr>
+                <td>Livre: </td>
+                <td><input type="text" name="headline"></td>
+            </tr>
+            <tr>
+                <td>Critique: </td>
+                <td>
+                    <textarea rows="5" cols="70" name="body"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td>Note: </td>
+                <td>
+                    <input type="radio" id="0" name="rating" value="0">
+                    <label for="0">0</label>
+                    <input type="radio" id="1" name="rating" value="1">
+                    <label for="1">1</label>
+                    <input type="radio" id="2" name="rating" value="2">
+                    <label for="2">2</label>
+                    <input type="radio" id="3" name="rating" value="3">
+                    <label for="3">3</label>
+                    <input type="radio" id="4" name="rating" value="4">
+                    <label for="4">4</label>
+                    <input type="radio" id="5" name="rating" value="5">
+                    <label for="5">5</label>
+                </td>
+            </tr>
+        </table>
+        <a href="/flux"><input type="button" value="Annuler"></a>
+        <input type="submit" name="critique" value="Publier une critique">
+    </form>
 {% endblock %}
