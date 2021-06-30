@@ -2,16 +2,25 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 
 from .models import Ticket, Review
-
+from follows.models import UserFollows
 
 def flux(request):
+    this_user = request.user
     ticket = Ticket.objects.all()
     review = Review.objects.all()
+    followed_users = UserFollows.objects.all()
+    
+    users = [this_user,]
+
+    for user in followed_users:
+        users.append(user.followed_user)
 
     context = {
         'ticket': ticket,
-        'review': review
+        'review': review,
+        'users': users,
     }
+
     return render(request, 'flux.html', context=context)
 
 def ticket(request):

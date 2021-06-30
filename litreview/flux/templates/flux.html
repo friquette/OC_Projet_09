@@ -17,12 +17,14 @@
         <h2>Bienvenue sur votre flux.</h2>
         <a href="{% url 'ticket' %}">Demander une critique</a> | <a href="{% url 'review' %}">Créer une critique</a>
         {% for tik in ticket %}
-            <h4>{{ tik.title }}</h4>
-            <p>{{ tik.description }}</p>
-            <p>{{ tik.user }}</p>
-            <p>{{ tik.image }}</p>
-            <img src="{{ tik.image }}">
-            <p>{{ tik.time_created }}</p>
+            {% if tik.user in users %}
+                <h4>{{ tik.title }}</h4>
+                <p>{{ tik.description }}</p>
+                <p>{{ tik.user }}</p>
+                <p>{{ tik.image }}</p>
+                <img src="{{ tik.image }}">
+                <p>{{ tik.time_created }}</p>
+            {% endif %}
         {% endfor %}
     {% endif %}
 {% endblock %}
