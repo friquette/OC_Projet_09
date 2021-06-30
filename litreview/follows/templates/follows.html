@@ -13,6 +13,7 @@
     {% for message in messages %}
         <p>{{ message }}</p>
     {% endfor %}
+
     <form method="post" action="{% url 'follows' %}">
         {% csrf_token %}
         <table>
@@ -21,25 +22,31 @@
                 <td><input type="text" name="username"></td>
             </tr>
         </table>
-        <input type="submit" value="Suivre">
+        <input type="submit" name="follow" value="Suivre">
     </form>
 
     <div>
         <table>
-            <tr>
-                {% if follows %}
-                    <td> Vous suivez: </td>
-            </tr>
+            {% if follows %}
+                <form method="post" action="{% url 'unfollows' %}">
+                    {% csrf_token %}
+                    <tr>
+                        <td> Vous suivez: </td>
+                    </tr>
                     {% for f in follows %}
-            <tr>
-                        <td>{{ f }}</td>
-            </tr>
+                        <tr>
+                            <td>
+                                <label>{{ f }}</label>
+                                <input type="submit" name="unfollow" value="{{f}}" />
+                            </td>
+                        </tr>
                     {% endfor %}
-            <tr>
-                {% else %}
+                </form>
+            {% else %}
+                <tr>
                     <td>Vous ne suivez personne.</td>
-                {% endif %}
-            </tr>
+                </tr>
+            {% endif %}
         </table>
     </div>
 {% endblock %}
