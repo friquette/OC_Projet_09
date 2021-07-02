@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
+from django.contrib.messages import messages
+from django.db import IntegrityError
 
 from .models import Ticket, Review
-from follows.models import UserFollows
+from ..follows.models import UserFollows
 
 def flux(request):
     current_user = request.user
@@ -86,6 +88,6 @@ def update(request):
 
         return redirect('flux')
 
-    return render(request, 'flux.html', context)
+    return render(request, 'flux.html')
 
 

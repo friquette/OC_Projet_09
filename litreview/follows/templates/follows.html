@@ -27,8 +27,10 @@
                     {% for f in follows %}
                         <tr>
                             <td>
-                                <label>{{ f }}</label>
-                                <input type="submit" name="unfollow" value="{{f}}" />
+                                <label>{{ f.followed_user.username }}</label>
+                                <!--<input type="text" name="{{ f.followed_user.username }}" value="{{ f.followed_user.username }}" />
+                                <input type="submit" name="unfollow" value="Unfollow" />-->
+                                <button type="submit" name="unfollow_button" value="{{ f.followed_user.username }}" href="">Unfollow</button>
                             </td>
                         </tr>
                     {% endfor %}
