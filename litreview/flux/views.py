@@ -36,6 +36,34 @@ def flux(request):
 
     return render(request, 'flux.html', context=context)
 
+
+def posts(request):
+    current_user = request.user
+    ticket = Ticket.objects.filter(user=current_user)
+    review = Review.objects.filter(user=current_user)
+    followed_users = UserFollows.objects.all()
+
+    tick_and_rev = []
+
+    for tick in ticket:
+        tick_and_rev.append(tick)
+
+    for rev in review:
+        tick_and_rev.append(rev)
+    
+    items = sorted(tick_and_rev, key=lambda item:item.time_created, reverse=True)
+
+    if request.GET.get('delete'):
+        return redirect('delete')
+
+    context = {
+        'ticket': ticket,
+        'review': review,
+        'items': items,
+    }
+
+    return render(request, 'posts.html', context)
+
 def ticket(request):
     if request.method == "POST":
         current_user = request.user
@@ -118,7 +146,6 @@ def response_to_ticket(request):
                     user=current_user
                 )
 
-                current_ticket.save()
                 review.save()
 
             return redirect('flux')
@@ -133,22 +160,69 @@ def response_to_ticket(request):
         )
         review_form = ReviewForm()
 
-    print(f'CURRENT TICKET: {current_ticket.description}')
     context = {
         'ticket_form': ticket_form,
         'review_form': review_form
     }
     return render(request, 'response.html', context)
 
-def update(request):
+
+def update_review(request):
+    ticket_id = request.GET.get("update")
+    current_review = Review.objects.get(pk=ticket_id)
+    current_ticket = Ticket.objects.get(pk=current_review.ticket.id)
+    
+
     if request.method == "POST":
-        ticket_id = request.POST.get("id")
-        current_ticket = Ticket.objects.get(pk=ticket_id)
         current_user = request.user
 
-        print(f"CURRENT TICKET = {current_ticket}")
+        ticket_form = TicketForm(request.POST)
+        review_form = ReviewForm(request.POST)
+
+        if ticket_form.is_valid() and review_form.is_valid():
+            if request.POST.get('critique') == "Publier une critique":
+                current_ticket.title = request.POST.get('title')
+                current_ticket.description = request.POST.get('description')
+                current_ticket.image = request.POST.get('image')
+
+                current_review.headline = request.POST.get('headline')
+                current_review.body = request.POST.get('headline')
+                current_review.rating = request.POST.get('headline')
+
+                if current_ticket.user == current_user:
+                    current_ticket.save()
+
+                current_review.save()
 
         return redirect('flux')
 
+    else:
+        ticket_form = TicketForm(
+            initial = {
+                'title': current_ticket.title,
+                'description': current_ticket.description,
+                'image': current_ticket.image,
+            }
+        )
+        review_form = ReviewForm(
+            initial = {
+                'headline': current_review.headline,
+                'body': current_review.body,
+                'rating': current_review.rating,
+            }
+        )
+
+    context = {
+        'ticket_form': ticket_form,
+        'review_form': review_form,
+    }
+
+    return render(request, 'review.html', context)
 
 
+def update_ticket(request):
+    pass
+
+
+def delete(request):
+    pass

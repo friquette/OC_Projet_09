@@ -1,0 +1,45 @@
+{% extends 'header_generic.html' %}
+{% load static %}
+
+{% block content %}
+    {% if not user.is_authenticated %}
+        <p>Veuillez <a href="../">vous connecter</a> pour accéder à ce contenu.</p>
+    {% else %}
+        <h2>Bienvenue sur vos posts.</h2>
+        
+        {% for item in items %}
+            {% if item.headline is None %}
+                <div>
+                    <p>Vous avez publié un ticket</p>
+                    <h4>{{ item.title }}</h4>
+                    <p>{{ item.description }}</p>
+                    <img src="{{ item.image }}">
+                    <p>{{ item.time_created }}</p>
+                        
+                    <form method="get" action="update_ticket">
+                        {% csrf_token %}
+                        <button type="submit" name="update" value="{{ item.id }}" >Modifier</button>
+                        <button type="submit" name="delete" value="{{ item.id }}">Supprimer</button>
+                    </form>
+                </div>
+            {% else %}
+                <div>
+                    <h5>Vous avez publié une critique</h3>
+                    <h4>{{ item.headline }} - {{ item.rating }}</h4>
+                    <p>{{ item.body }}</p>
+                    <p>{{ item.time_created }}</p>
+                    <div>
+                        <p>Ticket - {{ item.ticket.user }}</p>
+                        <p>{{ item.ticket.title }}</p>
+                        <img src="{{ item.ticket.image }}">
+                    </div>
+                    <form action="update_review" method="get">
+                        {% csrf_token %}
+                        <button type="submit" name="update" value="{{ item.id }}" >Modifier</button>
+                        <button type="submit" name="delete" value="{{ item.id }}">Supprimer</button>
+                    </form>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endblock %}
