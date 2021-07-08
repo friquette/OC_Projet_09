@@ -14,20 +14,12 @@
     <form method="post" action="{% url 'ticket' %}">
         {% csrf_token %}
         <table>
-             <tr>
-                <td>Titre: </td>
-                <td><input type="text" name="title"></td>
-            </tr>
-            <tr>
-                <td>Description: </td>
-                <td>
-                    <textarea rows="5" cols="70" name="description"></textarea>
-                </td>
-            </tr>
-            <tr>
-                <td>Image: </td>
-                <td><input type="file" accept=".jpg, .png" name="image"></td>
-            </tr>
+            {% for field in ticket_form %}
+                 <tr>
+                    <td>{{ field.label }}</td>
+                    <td>{{ field }}</td>
+                </tr>
+            {% endfor %}
         </table>
         <a href="/flux"><input type="button" value="Annuler"></a>
         <input type="submit" value="Demander une critique">

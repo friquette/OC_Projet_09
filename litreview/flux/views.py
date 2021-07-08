@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.db import IntegrityError
 
 from .models import Ticket, Review
+from .forms import TicketForm, ReviewForm
 from follows.models import UserFollows
 
 def flux(request):
@@ -37,57 +38,117 @@ def flux(request):
 
 def ticket(request):
     if request.method == "POST":
-        title = request.POST["title"]
-        description = request.POST["description"]
-        image = request.POST["image"]
         current_user = request.user
+        ticket_form = TicketForm(request.POST)
 
-        try:
-            ticket = Ticket.objects.create(title=title, description=description, image=image, user=current_user)
+        if ticket_form.is_valid():
+            ticket = Ticket(
+                title=request.POST['title'],
+                description=request.POST['description'],
+                image=request.POST['image'],
+                user=current_user
+            )
+
             ticket.save()
-        except IntegrityError:
-            messages.info(request, 'Vous avez oublié un champ.')
 
-        return redirect('flux')
+            return redirect('flux')
+    else:
+        ticket_form = TicketForm()
    
-    return render(request, 'ticket.html')
+    return render(request, 'ticket.html', {'ticket_form': ticket_form})
 
 def review(request):
     if request.method == "POST":
         current_user = request.user
+        ticket_form = TicketForm(request.POST)
+        review_form = ReviewForm(request.POST)
 
-        ticket_title = request.POST["title"]
-        ticket_description = request.POST["description"]
-        ticket_image = request.POST["image"]
-
-        review_title = request.POST["headline"]
-        review_content = request.POST["body"]
-        rating = request.POST["rating"]
-
-        ticket_for_review = Ticket.objects.create(title=ticket_title, 
-            description=ticket_description,
-            image=ticket_image,
-            user=current_user
+        if ticket_form.is_valid() and review_form.is_valid():
+            ticket = Ticket(
+                title=request.POST['title'],
+                description=request.POST['description'],
+                image=request.POST['image'],
+                user=current_user
             )
-        review = Review.objects.create(headline=review_title,
-            body=review_content,
-            rating=rating,
-            ticket=ticket_for_review,
-            user=current_user,
+            review = Review(
+                headline=request.POST["headline"],
+                body=request.POST["body"],
+                rating=request.POST["rating"],
+                ticket=ticket,
+                user=current_user
             )
 
-        return redirect('flux')
+            ticket.save()
+            review.save()
 
-    return render(request, 'review.html')
+            return redirect('flux')
 
+    else:
+        ticket_form = TicketForm()
+        review_form = ReviewForm()
+
+    context = {
+        'ticket_form': ticket_form,
+        'review_form': review_form,
+    }
+
+    return render(request, 'review.html', context)
+
+
+def response_to_ticket(request):
+    ticket_id = request.GET.get("create_review")
+    current_ticket = Ticket.objects.get(pk=ticket_id)
+
+    if request.method == "POST":
+        current_user = request.user
+        ticket_form = TicketForm(request.POST)
+        review_form = ReviewForm(request.POST)
+
+        if review_form.is_valid() and ticket_form.is_valid():
+            if request.POST.get('critique') == "Répondre à la demande":
+                current_ticket.title=request.POST.get('title')
+                current_ticket.description=request.POST.get('description')
+                current_ticket.image=request.POST.get('image')
+ 
+                review = Review(
+                    headline=request.POST["headline"],
+                    body=request.POST["body"],
+                    rating=request.POST["rating"],
+                    ticket=current_ticket,
+                    user=current_user
+                )
+
+                current_ticket.save()
+                review.save()
+
+            return redirect('flux')
+
+    else:
+        ticket_form = TicketForm(
+            initial = {
+                'title': current_ticket.title,
+                'description': current_ticket.description,
+                'image': current_ticket.image,
+            }
+        )
+        review_form = ReviewForm()
+
+    print(f'CURRENT TICKET: {current_ticket.description}')
+    context = {
+        'ticket_form': ticket_form,
+        'review_form': review_form
+    }
+    return render(request, 'response.html', context)
 
 def update(request):
     if request.method == "POST":
         ticket_id = request.POST.get("id")
         current_ticket = Ticket.objects.get(pk=ticket_id)
+        current_user = request.user
+
+        print(f"CURRENT TICKET = {current_ticket}")
 
         return redirect('flux')
 
-    return render(request, 'flux.html')
 
 

@@ -15,14 +15,15 @@
                         <p>{{ item.user}} a demandé une critique</p>
                         <h4>{{ item.title }}</h4>
                         <p>{{ item.description }}</p>
-                        <p>{{ item.image }}</p>
                         <img src="{{ item.image }}">
                         <p>{{ item.time_created }}</p>
-                        <form method="post" action="update">
-                            {% csrf_token %}
-                            <input type="hidden" name="id" value="{{ item.id }}">
-                            <input type="submit" name="create_review" value="Créer une critique">
-                        </form>
+                        
+                        {% if not item.review_set.exists %}
+                            <form method="get" action="response">
+                                {% csrf_token %}
+                                <button type="submit" name="create_review" value="{{ item.id }}" >Répondre à la demande</button>
+                            </form>
+                        {% endif %}
                     </div>
                 {% endif %}
             {% else %}
@@ -34,7 +35,6 @@
                     <div>
                         <p>Ticket - {{ item.ticket.user }}</p>
                         <p>{{ item.ticket.title }}</p>
-                        <p>{{ item.ticket.image }}</p>
                         <img src="{{ item.ticket.image }}">
                     </div>
                 </div>
