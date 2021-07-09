@@ -168,61 +168,108 @@ def response_to_ticket(request):
 
 
 def update_review(request):
-    ticket_id = request.GET.get("update")
-    current_review = Review.objects.get(pk=ticket_id)
-    current_ticket = Ticket.objects.get(pk=current_review.ticket.id)
-    
+    type_to_modify = request.GET.get('type')
+    item_id = request.GET.get('id')
+    review_form = None
 
-    if request.method == "POST":
-        current_user = request.user
+    if type_to_modify == 'ticket':
+        if request.method == "POST":
+            ticket_form = TicketForm(request.POST)
 
-        ticket_form = TicketForm(request.POST)
-        review_form = ReviewForm(request.POST)
-
-        if ticket_form.is_valid() and review_form.is_valid():
-            if request.POST.get('critique') == "Publier une critique":
-                current_ticket.title = request.POST.get('title')
-                current_ticket.description = request.POST.get('description')
-                current_ticket.image = request.POST.get('image')
-
-                current_review.headline = request.POST.get('headline')
-                current_review.body = request.POST.get('headline')
-                current_review.rating = request.POST.get('headline')
-
-                if current_ticket.user == current_user:
+            if ticket_form.is_valid():
+                if request.POST.get('update') == "Update":
+                    current_ticket = ticket_forms(request, item_id)
                     current_ticket.save()
 
-                current_review.save()
+            return redirect("posts")
 
-        return redirect('flux')
+        else:
+            current_ticket = Ticket.objects.get(pk=item_id)
+            ticket_form = TicketForm(
+                initial = {
+                    'title': current_ticket.title,
+                    'description': current_ticket.description,
+                    'image': current_ticket.image,
+                }
+            )
 
     else:
-        ticket_form = TicketForm(
-            initial = {
-                'title': current_ticket.title,
-                'description': current_ticket.description,
-                'image': current_ticket.image,
-            }
-        )
-        review_form = ReviewForm(
-            initial = {
-                'headline': current_review.headline,
-                'body': current_review.body,
-                'rating': current_review.rating,
-            }
-        )
+        if request.method == "POST":
+            ticket_form = TicketForm(request.POST)
+            review_form = ReviewForm(request.POST)
+
+            if ticket_form.is_valid() and review_form.is_valid():
+                if request.POST.get('update') == "Update":
+                    current_ticket = ticket_forms(request, Review.objects.get(pk=item_id).ticket.id)
+                    current_review = review_forms(request, item_id)
+
+                    current_review.save()
+            return redirect("posts")
+        else:
+            current_review = Review.objects.get(pk=item_id)
+            current_ticket = Ticket.objects.get(pk=current_review.ticket.id)
+            ticket_form = TicketForm(
+                initial = {
+                    'title': current_ticket.title,
+                    'description': current_ticket.description,
+                    'image': current_ticket.image,
+                }
+            )
+            review_form = ReviewForm(
+                initial = {
+                    'headline': current_review.headline,
+                    'body': current_review.body,
+                    'rating': current_review.rating,
+                }
+            )
 
     context = {
         'ticket_form': ticket_form,
+        'current_ticket': current_ticket,
         'review_form': review_form,
+        'type': type_to_modify,
     }
 
-    return render(request, 'review.html', context)
+    return render(request, 'update.html', context)
 
 
-def update_ticket(request):
-    pass
+def ticket_forms(request, item_id):
+    current_ticket = Ticket.objects.get(pk=item_id)
+
+    current_ticket.title = request.POST.get('title')
+    current_ticket.description = request.POST.get('description')
+    current_ticket.image = request.POST.get('image')
+
+    return current_ticket
+
+
+def review_forms(request, item_id):
+    current_review = Review.objects.get(pk=item_id)
+
+    current_review.headline = request.POST.get('headline')
+    current_review.body = request.POST.get('body')
+    current_review.rating = request.POST.get('rating')
+
+    return current_review
 
 
 def delete(request):
-    pass
+    id_to_delete = request.GET.get('id')
+    type_to_delete = request.GET.get('type')
+
+    if type_to_delete == "ticket":
+        item_to_delete = Ticket.objects.get(pk=id_to_delete)
+        if item_to_delete.review_set:
+            item_to_delete.review_set.all().delete()
+        item_to_delete.delete()
+
+        return redirect("posts")
+
+    elif type_to_delete == "review":
+        item_to_delete = Review.objects.get(pk=id_to_delete)
+        attached_ticket = Ticket.objects.get(pk=item_to_delete.ticket.id)
+        
+        item_to_delete.delete()
+        attached_ticket.delete()
+
+        return redirect("posts")

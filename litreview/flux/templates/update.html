@@ -1,0 +1,60 @@
+{% extends 'header_generic.html' %}
+{% load static %}
+
+{% block content %}
+    {% if not user.is_authenticated %}
+        <p>Veuillez <a href="../">vous connecter</a> pour accéder à ce contenu.</p>
+    {% endif %}
+
+    <h1>Créez une demande de critique</h1>
+
+    {% for message in messages %}
+        <p>{{ message }}</p>
+    {% endfor %}
+    <form method="post" action="">
+        {% csrf_token %}
+        {% if type == 'ticket' %}
+            <table>
+                {% for field in ticket_form %}
+                    <tr>
+                        <td>{{ field.label }}</td>
+                        <td>{{ field }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% elif type == "review" %}
+            <div>
+                <h3>Ticket</h3>
+                {% for field in ticket_form %}
+                    <div>
+                        <label>{{ field.label }}</label>
+                        <div>{{ field }}</div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div>
+                <h3>Critique</h3>
+                {% for field in review_form %}
+                    {% if field.label == 'Note' %}
+                        <div>
+                            <label>{{ field.label }}</label>
+                            {% for rate in field %}
+                                {{rate}}
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div>
+                            <label>{{ field.label }}</label>
+                            {{ field }}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
+        <a href="/flux/posts"><button type="button">Retour</button></a>
+        <input type="submit" name="update" value="Update" />
+        <a href="delete?id={{current_ticket.id}}&type=ticket">
+            <button type="button">Supprimer</button>
+        </a>
+    </form>
+{% endblock %}

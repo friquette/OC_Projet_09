@@ -18,8 +18,12 @@
                         
                     <form method="get" action="update_ticket">
                         {% csrf_token %}
-                        <button type="submit" name="update" value="{{ item.id }}" >Modifier</button>
-                        <button type="submit" name="delete" value="{{ item.id }}">Supprimer</button>
+                        <a href="update?id={{item.id}}&type=ticket">
+                            <button type="button">Modifier</button>
+                        </a>
+                        <a href="delete?id={{item.id}}&type=ticket">
+                            <button type="button">Supprimer</button>
+                        </a>
                     </form>
                 </div>
             {% else %}
@@ -35,8 +39,12 @@
                     </div>
                     <form action="update_review" method="get">
                         {% csrf_token %}
-                        <button type="submit" name="update" value="{{ item.id }}" >Modifier</button>
-                        <button type="submit" name="delete" value="{{ item.id }}">Supprimer</button>
+                        <a href="update?id={{item.id}}&type=review">
+                            <button type="button">Modifier</button>
+                        </a>
+                        <a href="delete?id={{item.id}}&type=review">
+                            <button type="button">Supprimer</button>
+                        </a>
                     </form>
                 </div>
             {% endif %}
