@@ -1,6 +1,7 @@
 from django.forms import ModelForm, Textarea, RadioSelect
 
 from .models import Ticket, Review
+from django import forms
 
 
 class TicketForm(ModelForm):
@@ -11,7 +12,7 @@ class TicketForm(ModelForm):
 			'title': 'Titre',
 			'description': 'Description',
 			'image': 'Image (optionel)'
-		} 
+		}
 
 
 class ReviewForm(ModelForm):

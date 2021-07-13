@@ -1,46 +1,69 @@
 {% extends 'base_generic.html' %}
 
 {% block content %}
-    <h2>Inscrivez-vous</h2>
-
-    {% if not user.is_authenticated %}
-        <a href="{% url 'register' %}">S'inscrire</a>
-    {% endif %}
-
-    {% if user.is_authenticated %}
-        <p>Vous êtes connecté, {{ user.username }}</p>
-    <a href="{% url 'logout' %}">Se déconnecter</a>
-    {% endif %}
-
-    {% if form.errors %}
-        <p>Votre identifiant ou mot de passe sont incorrects.</p>
-    {% endif %}
-
-    {% if next %}
+    
         {% if user.is_authenticated %}
-            <p>Votre compte n'a pas accès à cette page.</p>
-        {% else %}
-            <p>Veuillez vous connecter pour accéder à cette page.</p>
+            <div class="row justify-content-center alert alert-warning">
+                <p class="text-center">
+                    Vous êtes connecté, {{ user.username }}.<br/>
+                    <a href="{% url 'flux' %}">Accéder au site</a> |
+                    <a href="{% url 'logout' %}">Se déconnecter</a>
+                </p>
+            </div>
         {% endif %}
-    {% endif %}
 
-    {% for message in messages %}
-        <p>{{ message }}</p>
-    {% endfor %}
-    <form method="post" action="{% url 'login' %}">
-        {% csrf_token %}
-        <table>
-            <tr>
-                <td>Identifiant: </td>
-                <td><input type="text" name="username"></td>
-            </tr>
-            <tr>
-                <td>Mot de passe: </td>
-                <td><input type="password" name="password"></td>
-            </tr>
-        </table>
-        <input type="submit" value="Se connecter">
-        <input type="hidden" name="next" value="{{ next }}">
-    </form>
+        {% if form.errors %}
+            <p>Votre identifiant ou mot de passe sont incorrects.</p>
+        {% endif %}
+
+        {% if next %}
+            {% if user.is_authenticated %}
+                <p>Votre compte n'a pas accès à cette page.</p>
+            {% else %}
+                <p>Veuillez vous connecter pour accéder à cette page.</p>
+            {% endif %}
+        {% endif %}
+
+        {% for message in messages %}
+            <div class="row justify-content-center alert alert-danger alert-dismissible fade show">
+                <p>{{ message }}</p>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hiddent="true">&times;</span></button>
+            </div>
+        {% endfor %}
+    
+
+    <div class="row justify-content-md-center">
+        <div class="mr-5 px-5 py-5 border-right text-center">
+            <h2>Inscrivez-vous</h2>
+
+            {% if not user.is_authenticated %}
+                <a href="{% url 'register' %}">S'inscrire</a>
+            {% endif %}
+        </div>
+
+        <div class="justify-content-md-center">
+            <div class="mt-5 mb-5">
+                <h2>Connectez-vous</h2>
+                <form method="post" action="{% url 'login' %}">
+                {% csrf_token %}
+                    <table class="row mb-2">
+                        <tr>
+                            <td>Identifiant: </td>
+                            <td><input type="text" name="username"></td>
+                        </tr>
+                        <tr>
+                            <td>Mot de passe: </td>
+                            <td><input type="password" name="password"></td>
+                        </tr>
+                    </table>
+                    <div class="row justify-content-center">
+                        <input type="submit" value="Se connecter" class="btn btn-primary">
+                        <input type="hidden" name="next" value="{{ next }}">
+                    </div>
+                </form>
+            </div>
+            
+        </div>
+    </div>
 
 {% endblock %}

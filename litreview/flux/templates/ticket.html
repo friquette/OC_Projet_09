@@ -11,11 +11,11 @@
     {% for message in messages %}
         <p>{{ message }}</p>
     {% endfor %}
-    <form method="post" action="{% url 'ticket' %}">
+    <form method="post" action="{% url 'ticket' %}" enctype="multipart/form-data">
         {% csrf_token %}
         <table>
             {% for field in ticket_form %}
-                 <tr>
+                <tr>
                     <td>{{ field.label }}</td>
                     <td>{{ field }}</td>
                 </tr>

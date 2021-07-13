@@ -23,4 +23,4 @@ urlpatterns = [
     path('', include('connexion.urls')),
     path('flux/', include('flux.urls')),
     path('follows/', include('follows.urls')),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

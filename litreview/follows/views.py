@@ -7,6 +7,7 @@ from .models import UserFollows
 
 
 def follows(request):
+    page = 'follow'
     if "follow" in request.POST: 
         if request.method == 'POST':
             user_to_follow = request.POST.get('username', False)
@@ -32,7 +33,10 @@ def follows(request):
     for follow in user_followed:
         print(follow.followed_user)
    
-    context = {'follows': user_followed}
+    context = {
+        'follows': user_followed,
+        'page': page,
+    }
 
     return render(request, 'follows.html', context=context)
 
@@ -45,6 +49,3 @@ def unfollows(request):
         messages.info(request, f"L'utilisateur {user_to_unfollow} a bien été unfollow.")
             
         return redirect('follows')
-
-def print_dict(context):
-    print(context)

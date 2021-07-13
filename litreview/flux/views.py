@@ -8,6 +8,7 @@ from .forms import TicketForm, ReviewForm
 from follows.models import UserFollows
 
 def flux(request):
+    page = 'flux'
     current_user = request.user
     ticket = Ticket.objects.all()
     review = Review.objects.all()
@@ -27,17 +28,22 @@ def flux(request):
     
     items = sorted(tick_and_rev, key=lambda item:item.time_created, reverse=True)
 
+    for item in ticket:
+        print(f'IMAGE URL: {item.image}')
+
     context = {
         'ticket': ticket,
         'review': review,
         'users': users,
         'items': items,
+        'page': page,
     }
 
     return render(request, 'flux.html', context=context)
 
 
 def posts(request):
+    page = 'posts'
     current_user = request.user
     ticket = Ticket.objects.filter(user=current_user)
     review = Review.objects.filter(user=current_user)
@@ -60,6 +66,7 @@ def posts(request):
         'ticket': ticket,
         'review': review,
         'items': items,
+        'page': page,
     }
 
     return render(request, 'posts.html', context)
@@ -67,25 +74,28 @@ def posts(request):
 def ticket(request):
     if request.method == "POST":
         current_user = request.user
-        ticket_form = TicketForm(request.POST)
+        ticket_form = TicketForm(request.POST, request.FILES)
 
         if ticket_form.is_valid():
             ticket = Ticket(
                 title=request.POST['title'],
                 description=request.POST['description'],
-                image=request.POST['image'],
-                user=current_user
+                image=request.FILES['image'],
+                user=current_user,
             )
-
             ticket.save()
 
             return redirect('flux')
     else:
         ticket_form = TicketForm()
    
-    return render(request, 'ticket.html', {'ticket_form': ticket_form})
+    context = {
+        'ticket_form': ticket_form,
+    }
+    return render(request, 'ticket.html', context)
 
 def review(request):
+    page = 'flux'
     if request.method == "POST":
         current_user = request.user
         ticket_form = TicketForm(request.POST)
@@ -118,12 +128,14 @@ def review(request):
     context = {
         'ticket_form': ticket_form,
         'review_form': review_form,
+        'page': page,
     }
 
     return render(request, 'review.html', context)
 
 
 def response_to_ticket(request):
+    page = 'flux'
     ticket_id = request.GET.get("create_review")
     current_ticket = Ticket.objects.get(pk=ticket_id)
 
@@ -162,12 +174,14 @@ def response_to_ticket(request):
 
     context = {
         'ticket_form': ticket_form,
-        'review_form': review_form
+        'review_form': review_form,
+        'page': page,
     }
     return render(request, 'response.html', context)
 
 
 def update_review(request):
+    page = 'posts'
     type_to_modify = request.GET.get('type')
     item_id = request.GET.get('id')
     review_form = None
@@ -228,6 +242,7 @@ def update_review(request):
         'current_ticket': current_ticket,
         'review_form': review_form,
         'type': type_to_modify,
+        'page': page,
     }
 
     return render(request, 'update.html', context)
