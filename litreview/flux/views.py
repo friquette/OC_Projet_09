@@ -49,6 +49,9 @@ def posts(request):
     review = Review.objects.filter(user=current_user)
     followed_users = UserFollows.objects.all()
 
+    #rate = range(0, int(review))
+    print(review)
+
     tick_and_rev = []
 
     for tick in ticket:
@@ -98,14 +101,14 @@ def review(request):
     page = 'flux'
     if request.method == "POST":
         current_user = request.user
-        ticket_form = TicketForm(request.POST)
+        ticket_form = TicketForm(request.POST, request.FILES)
         review_form = ReviewForm(request.POST)
 
         if ticket_form.is_valid() and review_form.is_valid():
             ticket = Ticket(
                 title=request.POST['title'],
                 description=request.POST['description'],
-                image=request.POST['image'],
+                image=request.FILES['image'],
                 user=current_user
             )
             review = Review(
@@ -141,14 +144,14 @@ def response_to_ticket(request):
 
     if request.method == "POST":
         current_user = request.user
-        ticket_form = TicketForm(request.POST)
+        ticket_form = TicketForm(request.POST, request.FILES)
         review_form = ReviewForm(request.POST)
 
         if review_form.is_valid() and ticket_form.is_valid():
             if request.POST.get('critique') == "Répondre à la demande":
                 current_ticket.title=request.POST.get('title')
                 current_ticket.description=request.POST.get('description')
-                current_ticket.image=request.POST.get('image')
+                current_ticket.image=request.FILES.get('image')
  
                 review = Review(
                     headline=request.POST["headline"],
@@ -188,7 +191,7 @@ def update_review(request):
 
     if type_to_modify == 'ticket':
         if request.method == "POST":
-            ticket_form = TicketForm(request.POST)
+            ticket_form = TicketForm(request.POST, request.FILES)
 
             if ticket_form.is_valid():
                 if request.POST.get('update') == "Update":
@@ -207,9 +210,9 @@ def update_review(request):
                 }
             )
 
-    else:
+    elif type_to_modify == 'review':
         if request.method == "POST":
-            ticket_form = TicketForm(request.POST)
+            ticket_form = TicketForm(request.POST, request.FILES)
             review_form = ReviewForm(request.POST)
 
             if ticket_form.is_valid() and review_form.is_valid():
@@ -253,7 +256,7 @@ def ticket_forms(request, item_id):
 
     current_ticket.title = request.POST.get('title')
     current_ticket.description = request.POST.get('description')
-    current_ticket.image = request.POST.get('image')
+    current_ticket.image = request.FILES.get('image')
 
     return current_ticket
 

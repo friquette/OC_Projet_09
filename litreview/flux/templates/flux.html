@@ -7,7 +7,7 @@
             <p>Veuillez <a href="../">vous connecter</a> pour accéder à ce contenu.</p>
         </div>
     {% else %}
-        <div class="container text-center border w-50">
+        <div class="container text-center border border-secondary rounded w-50">
             <div class="mb-5 mt-5">
                 <a href="{% url 'ticket' %}" class="btn btn-primary">Demander une critique</a> <a href="{% url 'review' %}" class="btn btn-primary">Créer une critique</a>
             </div>
@@ -16,16 +16,18 @@
                 {% for item in items %}
                     {% if item.headline is None %}
                         {% if item.user in users %}
-                            <div class="text-left border mb-2 px-1">
+                            <div class="text-left border {%if not item.review_set.exists%} border-primary {%else%} border-secondary {%endif%} rounded mb-2 px-1">
                                 <div class="row px-3">
                                     <p class="w-50">{{ item.user}} a demandé une critique</p>
                                     <p class="w-50 text-right">{{ item.time_created }}</p>
                                 </div>
                                 <h5>{{ item.title }}</h5>
                                 <p>{{ item.description }}</p>
-                                <div class="row w-50 h-50 ml-1 mb-2">
-                                    <img src="/media/{{item.image}}" alt="{{ item.image }}">
-                                </div>
+                                {% if item.image != "" %}
+                                    <div class="row ml-1 mb-2">
+                                        <img src="/media/{{item.image}}" alt="{{ item.ticket.image }}" class="h-25 w-25" />
+                                    </div>
+                                {% endif %}
 
                                 {% if not item.review_set.exists %}
                                     <form method="get" action="response" class="mb-2 text-right">
@@ -36,20 +38,22 @@
                             </div>
                         {% endif %}
                     {% else %}
-                        <div class="border mb-2 px-2 text-left">
+                        <div class="border border-secondary rounded mb-2 px-2 text-left">
                             <div class="row px-3">
-                                <p class="w-50">Vous avez publié une critique</p>
+                                <p class="w-50">{{item.user}} a publié une critique</p>
                                 <p class="w-50 text-right">{{ item.time_created }}</p>
                             </div>
                             <h4>{{ item.headline }} - {{ item.rating }}</h4>
                             <p>{{ item.body }}</p>
                                 
-                            <div class="text-left border px-1 mb-2">
+                            <div class="text-left border border-secondary bg-light rounded px-1 mb-2">
                                 <p>Ticket - {{ item.ticket.user }}</p>
                                 <p>{{ item.ticket.title }}</p>
-                                <div class="row w-50 h-50 mb-2 ml-1">
-                                    <img src="/media/{{item.ticket.image}}" alt="{{ item.image }}">
+                                {% if item.ticket.image != "" %}
+                                <div class="row mb-2 ml-1">
+                                    <img src="/media/{{item.ticket.image}}" alt="{{ item.image }}" class="h-25 w-25" />
                                 </div>
+                                {% endif %}
                             </div>
                         </div>
                     {% endif %}
