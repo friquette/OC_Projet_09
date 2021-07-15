@@ -12,13 +12,13 @@ def flux(request):
     current_user = request.user
     ticket = Ticket.objects.all()
     review = Review.objects.all()
-    followed_users = UserFollows.objects.all()
+    followed_users = UserFollows.objects.filter(user=current_user)
 
     tick_and_rev = []
-    users = [current_user,]
-
+    users = [current_user.username,]
+    
     for user in followed_users:
-        users.append(user.followed_user)
+        users.append(user.followed_user.username)
 
     for tick in ticket:
         tick_and_rev.append(tick)
@@ -27,9 +27,6 @@ def flux(request):
         tick_and_rev.append(rev)
     
     items = sorted(tick_and_rev, key=lambda item:item.time_created, reverse=True)
-
-    for item in ticket:
-        print(f'IMAGE URL: {item.image}')
 
     context = {
         'ticket': ticket,
@@ -48,9 +45,6 @@ def posts(request):
     ticket = Ticket.objects.filter(user=current_user)
     review = Review.objects.filter(user=current_user)
     followed_users = UserFollows.objects.all()
-
-    #rate = range(0, int(review))
-    print(review)
 
     tick_and_rev = []
 

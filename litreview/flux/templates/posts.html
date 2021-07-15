@@ -7,8 +7,8 @@
             <p>Veuillez <a href="../">vous connecter</a> pour accéder à ce contenu.</p>
         </div>
     {% else %}
-        <div class="container text-center border border-secondary rounded w-50">
-            <h2>Bienvenue sur vos posts.</h2>
+        <div class="container text-center border border-secondary rounded w-75 mb-2">
+            <h2 class="mb-3 mt-3">Vos posts</h2>
             
             {% for item in items %}
                 {% if item.headline is None %}

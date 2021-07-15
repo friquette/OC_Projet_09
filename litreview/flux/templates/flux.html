@@ -7,7 +7,7 @@
             <p>Veuillez <a href="../">vous connecter</a> pour accéder à ce contenu.</p>
         </div>
     {% else %}
-        <div class="container text-center border border-secondary rounded w-50">
+        <div class="container text-center border border-secondary rounded w-75 mb-2">
             <div class="mb-5 mt-5">
                 <a href="{% url 'ticket' %}" class="btn btn-primary">Demander une critique</a> <a href="{% url 'review' %}" class="btn btn-primary">Créer une critique</a>
             </div>
@@ -15,7 +15,7 @@
             <div class="container">
                 {% for item in items %}
                     {% if item.headline is None %}
-                        {% if item.user in users %}
+                        {% if item.user.username in users %}
                             <div class="text-left border {%if not item.review_set.exists%} border-primary {%else%} border-secondary {%endif%} rounded mb-2 px-1">
                                 <div class="row px-3">
                                     <p class="w-50">{{ item.user}} a demandé une critique</p>
