@@ -10,29 +10,37 @@ from follows.models import UserFollows
 def flux(request):
     page = 'flux'
     current_user = request.user
-    ticket = Ticket.objects.all()
-    review = Review.objects.all()
     followed_users = UserFollows.objects.filter(user=current_user)
 
     tick_and_rev = []
-    users = [current_user.username,]
+    users = [current_user,]
     
     for user in followed_users:
-        users.append(user.followed_user.username)
+        users.append(user.followed_user)
+        
+    for user in users:
+        review = Review.objects.filter(user=user)
+        review_from_other_user = Review.objects.filter(ticket__user=user)
+        ticket = Ticket.objects.filter(user=user)
 
-    for tick in ticket:
-        tick_and_rev.append(tick)
+        for r in review:
+            tick_and_rev.append((r, (5-r.rating)))
 
-    for rev in review:
-        tick_and_rev.append(rev)
+        for other_review in review_from_other_user:
+            if other_review not in tick_and_rev[0]:
+                tick_and_rev.append((other_review, (5-other_review.rating)))
+
+        for t in ticket:
+            tick_and_rev.append((t, None))
     
-    items = sorted(tick_and_rev, key=lambda item:item.time_created, reverse=True)
+    items = sorted(tick_and_rev, key=lambda item:item[0].time_created, reverse=True)
 
     context = {
         'ticket': ticket,
         'review': review,
         'users': users,
         'items': items,
+        'current_user': current_user,
         'page': page,
     }
 
@@ -105,6 +113,7 @@ def review(request):
                 image=request.FILES['image'],
                 user=current_user
             )
+
             review = Review(
                 headline=request.POST["headline"],
                 body=request.POST["body"],

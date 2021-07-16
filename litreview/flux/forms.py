@@ -9,7 +9,7 @@ class TicketForm(ModelForm):
 		model = Ticket
 		fields = ('title', 'description', 'image')
 		labels = {
-			'title': 'Titre',
+			'title': 'Livre',
 			'description': 'Description',
 			'image': 'Image (optionel)'
 		}
@@ -21,7 +21,7 @@ class ReviewForm(ModelForm):
 		model = Review
 		fields = ('headline', 'body', 'rating')
 		labels = {
-			'headline': 'Livre',
+			'headline': 'Titre',
 			'body': 'Critique',
 			'rating': 'Note'
 		}

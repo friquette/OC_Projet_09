@@ -43,9 +43,12 @@ def follows(request):
 
 
 def unfollows(request):
+    current_user = request.user
     if 'unfollow_button' in request.POST:
         user_to_unfollow = request.POST.get('unfollow_button')
-        unfollowed_user = UserFollows.objects.filter(followed_user__username=user_to_unfollow).delete()
+        unfollowed_user = UserFollows.objects.filter(user=current_user).get(followed_user__username=user_to_unfollow)
+
+        unfollowed_user.delete()
 
         messages.info(request, f"L'utilisateur {user_to_unfollow} a bien été unfollow.")
             

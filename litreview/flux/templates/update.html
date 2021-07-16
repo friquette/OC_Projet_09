@@ -13,7 +13,7 @@
             {% for message in messages %}
                 <p class="alert alert-warning text-center">{{ message }}</p>
             {% endfor %}
-            <form method="post" action="">
+            <form method="post" action="" enctype="multipart/form-data">
                 {% csrf_token %}
                 {% if type == 'ticket' %}
                     <div class="border border-secondary rounded container mb-2">

@@ -14,45 +14,63 @@
 
             <div class="container">
                 {% for item in items %}
-                    {% if item.headline is None %}
-                        {% if item.user.username in users %}
-                            <div class="text-left border {%if not item.review_set.exists%} border-primary {%else%} border-secondary {%endif%} rounded mb-2 px-1">
-                                <div class="row px-3">
-                                    <p class="w-50">{{ item.user}} a demandé une critique</p>
-                                    <p class="w-50 text-right">{{ item.time_created }}</p>
-                                </div>
-                                <h5>{{ item.title }}</h5>
-                                <p>{{ item.description }}</p>
-                                {% if item.image != "" %}
-                                    <div class="row ml-1 mb-2">
-                                        <img src="/media/{{item.image}}" alt="{{ item.ticket.image }}" class="h-25 w-25" />
-                                    </div>
+                    {% if item.0.headline is None %}
+                        <div class="text-left border {%if not item.0.review_set.exists%} border-primary {%else%} border-secondary {%endif%} rounded mb-2 px-1">
+                            <div class="row px-3">
+                                {% if item.0.user == current_user %}
+                                    <p class="w-50">Vous avez demandé une critique</p>
+                                {% else %}
+                                    <p class="w-50">{{ item.0.user}} a demandé une critique</p>
                                 {% endif %}
-
-                                {% if not item.review_set.exists %}
-                                    <form method="get" action="response" class="mb-2 text-right">
-                                        {% csrf_token %}
-                                        <button type="submit" name="create_review" value="{{ item.id }}" class="btn btn-outline-primary">Créer une critique</button>
-                                    </form>
-                                {% endif %}
+                                <p class="w-50 text-right">{{ item.0.time_created }}</p>
                             </div>
-                        {% endif %}
+                            <h5>{{ item.0.title }}</h5>
+                            <p>{{ item.0.description }}</p>
+                            {% if item.0.image != "" %}
+                                <div class="row ml-1 mb-2">
+                                    <img src="/media/{{item.0.image}}" alt="{{ item.0.ticket.image }}" class="h-25 w-25" />
+                                </div>
+                            {% endif %}
+
+                            {% if not item.0.review_set.exists %}
+                                <form method="get" action="response" class="mb-2 text-right">
+                                    {% csrf_token %}
+                                    <button type="submit" name="create_review" value="{{ item.0.id }}" class="btn btn-outline-primary">Créer une critique</button>
+                                </form>
+                            {% endif %}
+                        </div>
                     {% else %}
                         <div class="border border-secondary rounded mb-2 px-2 text-left">
                             <div class="row px-3">
-                                <p class="w-50">{{item.user}} a publié une critique</p>
-                                <p class="w-50 text-right">{{ item.time_created }}</p>
+                                {% if item.0.user == current_user %}
+                                    <p class="w-50">Vous avez publié une critique</p>
+                                {% else %}
+                                    <p class="w-50">{{item.0.user}} a publié une critique</p>
+                                {% endif %}
+                                <p class="w-50 text-right">{{ item.0.time_created }}</p>
                             </div>
-                            <h4>{{ item.headline }} - {{ item.rating }}</h4>
-                            <p>{{ item.body }}</p>
-                                
+                            <h4>
+                                {{ item.0.headline }} - 
+                                {% with ''|center:item.0.rating as range %}
+                                    {% for star in range %}
+                                        &starf;
+                                    {% endfor %}
+                                {% endwith %}
+                                {% with ''|center:item.1 as range %}
+                                    {% for star in range %}
+                                        &star;
+                                    {% endfor %}
+                                {% endwith %}
+                            </h4>
+                            <p>{{ item.0.body }}</p>
+                                    
                             <div class="text-left border border-secondary bg-light rounded px-1 mb-2">
-                                <p>Ticket - {{ item.ticket.user }}</p>
-                                <p>{{ item.ticket.title }}</p>
-                                {% if item.ticket.image != "" %}
-                                <div class="row mb-2 ml-1">
-                                    <img src="/media/{{item.ticket.image}}" alt="{{ item.image }}" class="h-25 w-25" />
-                                </div>
+                                <p>Ticket - {{ item.0.ticket.user }}</p>
+                                <p>{{ item.0.ticket.title }}</p>
+                                {% if item.0.ticket.image != "" %}
+                                    <div class="row mb-2 ml-1">
+                                        <img src="/media/{{item.0.ticket.image}}" alt="{{ item.0.image }}" class="h-25 w-25" />
+                                    </div>
                                 {% endif %}
                             </div>
                         </div>

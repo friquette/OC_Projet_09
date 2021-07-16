@@ -10,55 +10,60 @@
         <div class="container text-center border border-secondary rounded w-75 mb-2">
             <h2 class="mb-3 mt-3">Vos posts</h2>
             
-            {% for item in items %}
-                {% if item.headline is None %}
-                    <div class="text-left border border-secondary rounded mb-2 px-1">
-                        <div class="row px-3">
-                            <p class="w-50">Vous avez demandé une critique</p>
-                            <p class="w-50 text-right">{{ item.time_created }}</p>
-                        </div>
-                        <h5>{{ item.title }}</h5>
-                        <p>{{ item.description }}</p>
-                        {% if item.image != "" %}
-                            <div class="row ml-1 mb-2">
-                                <img src="/media/{{item.image}}" alt="{{ item.image }}" class="h-25 w-25" />
-                            </div>
-                        {% endif %}
-                            
-                        <form method="get" action="update_review" class="mb-2 text-right">
-                            {% csrf_token %}
-                            <a href="update?id={{item.id}}&type=ticket" class="btn btn-outline-primary">Modifier</a>
-                            <a href="delete?id={{item.id}}&type=ticket" class="btn btn-danger">Supprimer</a>
-                        </form>
-                    </div>
-                {% else %}
-                    <div class="text-left border border-secondary rounded mb-2 px-1">
-                        <h5>Vous avez publié une critique</h3>
-                        <h4>{{ item.headline }} - {{ item.rating }}</h4>
-                        {% with item.rating|add:"0" as range %}
-                            <p>{{range}}</p>
-                        {% endwith %}
-                        <p>{{ item.body }}</p>
-                        <p>{{ item.time_created }}</p>
-                        
-                        <div class="text-left border border-secondary bg-light rounded px-1 mb-2">
-                            <p>Ticket - {{ item.ticket.user }}</p>
-                            <p>{{ item.ticket.title }}</p>
-                            {% if item.ticket.image != "" %}
-                            <div class="row mb-2 ml-1">
-                                <img src="/media/{{item.ticket.image}}" alt="{{ item.image }}" class="h-25 w-25" />
-                            </div>
-                            {% endif %}
-                        </div>
-
-                        <form action="update_review" method="get" class="mb-2 text-right">
-                            {% csrf_token %}
-                            <a href="update?id={{item.id}}&type=review" class="btn btn-outline-primary">Modifier</a>
-                            <a href="delete?id={{item.id}}&type=review" class="btn btn-danger">Supprimer</a>
-                        </form>
-                    </div>
+            <div class="container">
+                {% if not items %}
+                    <p>Vous n'avez encore rien posté</p>
                 {% endif %}
-            {% endfor %}
+                {% for item in items %}
+                    {% if item.headline is None %}
+                        <div class="text-left border border-secondary rounded mb-2 px-1">
+                            <div class="row px-3">
+                                <p class="w-50">Vous avez demandé une critique</p>
+                                <p class="w-50 text-right">{{ item.time_created }}</p>
+                            </div>
+                            <h5>{{ item.title }}</h5>
+                            <p>{{ item.description }}</p>
+                            {% if item.image != "" %}
+                                <div class="row ml-1 mb-2">
+                                    <img src="/media/{{item.image}}" alt="{{ item.image }}" class="h-25 w-25" />
+                                </div>
+                            {% endif %}
+                                
+                            <form method="get" action="update_review" class="mb-2 text-right">
+                                {% csrf_token %}
+                                <a href="update?id={{item.id}}&type=ticket" class="btn btn-outline-primary">Modifier</a>
+                                <a href="delete?id={{item.id}}&type=ticket" class="btn btn-danger">Supprimer</a>
+                            </form>
+                        </div>
+                    {% else %}
+                        <div class="text-left border border-secondary rounded mb-2 px-2">
+                            <h5>Vous avez publié une critique</h3>
+                            <h4>{{ item.headline }} - {{ item.rating }}</h4>
+                            {% with item.rating|add:"0" as range %}
+                                <p>{{range}}</p>
+                            {% endwith %}
+                            <p>{{ item.body }}</p>
+                            <p>{{ item.time_created }}</p>
+                            
+                            <div class="text-left border border-secondary bg-light rounded px-1 mb-2">
+                                <p>Ticket - {{ item.ticket.user }}</p>
+                                <p>{{ item.ticket.title }}</p>
+                                {% if item.ticket.image != "" %}
+                                <div class="row mb-2 ml-1">
+                                    <img src="/media/{{item.ticket.image}}" alt="{{ item.image }}" class="h-25 w-25" />
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <form action="update_review" method="get" class="mb-2 text-right">
+                                {% csrf_token %}
+                                <a href="update?id={{item.id}}&type=review" class="btn btn-outline-primary">Modifier</a>
+                                <a href="delete?id={{item.id}}&type=review" class="btn btn-danger">Supprimer</a>
+                            </form>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
         </div>
     {% endif %}
 {% endblock %}

@@ -14,7 +14,7 @@
                 <p class="alert alert-warning text-center">{{ message }}</p>
             {% endfor %}
 
-            <form method="post" action="{% url 'review' %}">
+            <form method="post" action="{% url 'review' %}" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="border border-secondary rounded container mb-2">
                     <h3>Ticket</h3>
