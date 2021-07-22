@@ -1,11 +1,9 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.models import User
-from django.contrib import messages
-from django.db import IntegrityError
 
 from .models import Ticket, Review
 from .forms import TicketForm, ReviewForm
 from follows.models import UserFollows
+
 
 def flux(request):
     page = 'flux'
@@ -13,11 +11,11 @@ def flux(request):
     followed_users = UserFollows.objects.filter(user=current_user)
 
     tick_and_rev = []
-    users = [current_user,]
-    
+    users = [current_user, ]
+
     for user in followed_users:
         users.append(user.followed_user)
-        
+
     for user in users:
         review = Review.objects.filter(user=user)
         review_from_other_user = Review.objects.filter(ticket__user=user)
@@ -32,8 +30,8 @@ def flux(request):
 
         for t in ticket:
             tick_and_rev.append((t, None))
-    
-    items = sorted(tick_and_rev, key=lambda item:item[0].time_created, reverse=True)
+
+    items = sorted(tick_and_rev, key=lambda item: item[0].time_created, reverse=True)
 
     context = {
         'ticket': ticket,
@@ -52,7 +50,6 @@ def posts(request):
     current_user = request.user
     ticket = Ticket.objects.filter(user=current_user)
     review = Review.objects.filter(user=current_user)
-    followed_users = UserFollows.objects.all()
 
     tick_and_rev = []
 
@@ -61,8 +58,8 @@ def posts(request):
 
     for rev in review:
         tick_and_rev.append(rev)
-    
-    items = sorted(tick_and_rev, key=lambda item:item.time_created, reverse=True)
+
+    items = sorted(tick_and_rev, key=lambda item: item.time_created, reverse=True)
 
     if request.GET.get('delete'):
         return redirect('delete')
@@ -75,6 +72,7 @@ def posts(request):
     }
 
     return render(request, 'posts.html', context)
+
 
 def ticket(request):
     if request.method == "POST":
@@ -93,11 +91,12 @@ def ticket(request):
             return redirect('flux')
     else:
         ticket_form = TicketForm()
-   
+
     context = {
         'ticket_form': ticket_form,
     }
     return render(request, 'ticket.html', context)
+
 
 def review(request):
     page = 'flux'
@@ -152,10 +151,10 @@ def response_to_ticket(request):
 
         if review_form.is_valid() and ticket_form.is_valid():
             if request.POST.get('critique') == "Répondre à la demande":
-                current_ticket.title=request.POST.get('title')
-                current_ticket.description=request.POST.get('description')
-                current_ticket.image=request.FILES.get('image')
- 
+                current_ticket.title = request.POST.get('title')
+                current_ticket.description = request.POST.get('description')
+                current_ticket.image = request.FILES.get('image')
+
                 review = Review(
                     headline=request.POST["headline"],
                     body=request.POST["body"],
@@ -170,7 +169,7 @@ def response_to_ticket(request):
 
     else:
         ticket_form = TicketForm(
-            initial = {
+            initial={
                 'title': current_ticket.title,
                 'description': current_ticket.description,
                 'image': current_ticket.image,
@@ -206,7 +205,7 @@ def update_review(request):
         else:
             current_ticket = Ticket.objects.get(pk=item_id)
             ticket_form = TicketForm(
-                initial = {
+                initial={
                     'title': current_ticket.title,
                     'description': current_ticket.description,
                     'image': current_ticket.image,
@@ -229,14 +228,14 @@ def update_review(request):
             current_review = Review.objects.get(pk=item_id)
             current_ticket = Ticket.objects.get(pk=current_review.ticket.id)
             ticket_form = TicketForm(
-                initial = {
+                initial={
                     'title': current_ticket.title,
                     'description': current_ticket.description,
                     'image': current_ticket.image,
                 }
             )
             review_form = ReviewForm(
-                initial = {
+                initial={
                     'headline': current_review.headline,
                     'body': current_review.body,
                     'rating': current_review.rating,
@@ -289,7 +288,7 @@ def delete(request):
     elif type_to_delete == "review":
         item_to_delete = Review.objects.get(pk=id_to_delete)
         attached_ticket = Ticket.objects.get(pk=item_to_delete.ticket.id)
-        
+
         item_to_delete.delete()
         attached_ticket.delete()
 

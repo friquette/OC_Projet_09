@@ -4,3 +4,4 @@ env
 .idea
 .vscode
 source_to_models.py
+litreview/.flake8
