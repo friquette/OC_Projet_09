@@ -22,6 +22,9 @@ Install the packages <br>
 Go to the litreview folder
 `cd litreview`
 
+For the first time you are using the applicatin, migrate the tables in the database<br/>
+`python manage.py migrate`
+
 Run your server</br>
 `python manage.py runserver` </br>
 

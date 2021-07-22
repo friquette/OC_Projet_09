@@ -5,3 +5,5 @@ env
 .vscode
 source_to_models.py
 litreview/.flake8
+db.sqlite3
+litreview/db.sqlite3
