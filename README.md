@@ -15,6 +15,9 @@ Activate your virtual environment <br>
 - On Windows `env\Scripts\activate.bat`
 - On Mac OS/Linux `source env/bin/activate`
 
+Go in the project folder
+`cd litreview`
+
 Install the packages <br>
 `pip install -r requirements.txt`
 
