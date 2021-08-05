@@ -22,9 +22,6 @@ Install the packages <br>
 `pip install -r requirements.txt`
 
 ## How to use it
-Go to the litreview folder
-`cd litreview`
-
 For the first time you are using the application, migrate the tables in the database<br/>
 `python manage.py migrate`
 
