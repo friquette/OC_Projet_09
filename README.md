@@ -38,6 +38,8 @@ the root application folder.
 Before sending the application online, open the settings.py file in litreview folder, 
 and change the `DEBUG = True` to `DEBUG = False`
 
+To interrupt your server, simply hit `CTRL+C` in your command prompt.
+
 ## Admin part
 
 To create an admin user, go to the root application folder and enter:
