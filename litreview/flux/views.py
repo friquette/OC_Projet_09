@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
 
 from .models import Ticket, Review
 from .forms import TicketForm, ReviewForm
 from follows.models import UserFollows
 
 
+@login_required
 def flux(request):
     page = 'flux'
     current_user = request.user
@@ -31,7 +33,11 @@ def flux(request):
         for t in ticket:
             tick_and_rev.append((t, None))
 
-    items = sorted(tick_and_rev, key=lambda item: item[0].time_created, reverse=True)
+    items = sorted(
+        tick_and_rev,
+        key=lambda item: item[0].time_created,
+        reverse=True
+    )
 
     context = {
         'ticket': ticket,
@@ -45,6 +51,7 @@ def flux(request):
     return render(request, 'flux.html', context=context)
 
 
+@login_required
 def posts(request):
     page = 'posts'
     current_user = request.user
@@ -59,7 +66,11 @@ def posts(request):
     for rev in review:
         tick_and_rev.append(rev)
 
-    items = sorted(tick_and_rev, key=lambda item: item.time_created, reverse=True)
+    items = sorted(
+        tick_and_rev,
+        key=lambda item: item.time_created,
+        reverse=True
+    )
 
     if request.GET.get('delete'):
         return redirect('delete')
@@ -74,6 +85,7 @@ def posts(request):
     return render(request, 'posts.html', context)
 
 
+@login_required
 def ticket(request):
     if request.method == "POST":
         current_user = request.user
@@ -98,6 +110,7 @@ def ticket(request):
     return render(request, 'ticket.html', context)
 
 
+@login_required
 def review(request):
     page = 'flux'
     if request.method == "POST":
@@ -139,6 +152,7 @@ def review(request):
     return render(request, 'review.html', context)
 
 
+@login_required
 def response_to_ticket(request):
     page = 'flux'
     ticket_id = request.GET.get("create_review")
@@ -185,6 +199,7 @@ def response_to_ticket(request):
     return render(request, 'response.html', context)
 
 
+@login_required
 def update_review(request):
     page = 'posts'
     type_to_modify = request.GET.get('type')
@@ -219,7 +234,10 @@ def update_review(request):
 
             if ticket_form.is_valid() and review_form.is_valid():
                 if request.POST.get('update') == "Update":
-                    current_ticket = ticket_forms(request, Review.objects.get(pk=item_id).ticket.id)
+                    current_ticket = ticket_forms(
+                        request,
+                        Review.objects.get(pk=item_id).ticket.id
+                    )
                     current_review = review_forms(request, item_id)
 
                     current_review.save()

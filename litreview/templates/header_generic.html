@@ -1,18 +1,16 @@
 {% extends 'base_generic.html' %}
 
 {% block header %}
-    {% if user.is_authenticated %}
-        <ul class="nav nav-tabs">
-            <li class="nav-item">
-                <a class="nav-link {%if page == 'flux'%}active{%endif%}" href="{% url 'flux' %}">Flux</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link {%if page == 'posts'%}active{%endif%}" href="{% url 'posts' %}">Posts</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link {%if page == 'follow'%}active{%endif%}" href="{% url 'follows' %}">Abonnements</a>
-            </li> 
-        </ul>
-        <a class="text-danger" href="{% url 'logout' %}">Se déconnecter</a>
-    {% endif %}
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link {%if page == 'flux'%}active{%endif%}" href="{% url 'flux' %}">Flux</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {%if page == 'posts'%}active{%endif%}" href="{% url 'posts' %}">Posts</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {%if page == 'follow'%}active{%endif%}" href="{% url 'follows' %}">Abonnements</a>
+        </li> 
+    </ul>
+    <a class="text-danger" href="{% url 'logout' %}">Se déconnecter</a>
 {% endblock %}

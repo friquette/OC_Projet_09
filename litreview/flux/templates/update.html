@@ -2,75 +2,69 @@
 {% load static %}
 
 {% block content %}
-    {% if not user.is_authenticated %}
-        <div class="row justify-content-center alert alert-warning">
-            <p>Veuillez <a href="../">vous connecter</a> pour accéder à ce contenu.</p>
-        </div>
-    {% else %}
-        <div class="container border border-secondary rounded w-75 mb-2">
-            <h1>Créez une demande de critique</h1>
+    <div class="container border border-secondary rounded w-75 mb-2">
+        <h1>Créez une demande de critique</h1>
 
-            {% for message in messages %}
-                <p class="alert alert-warning text-center">{{ message }}</p>
-            {% endfor %}
-            <form method="post" action="" enctype="multipart/form-data">
-                {% csrf_token %}
-                {% if type == 'ticket' %}
-                    <div class="border border-secondary rounded container mb-2">
-                    <h3>Ticket</h3>
-                    {% for field in ticket_form %}
-                        <div class="mb-2">
-                            <label for="{{field.label.id_for_label}}">{{ field.label }}</label>
+        {% for message in messages %}
+            <p class="alert alert-warning text-center">{{ message }}</p>
+        {% endfor %}
+        <form method="post" action="" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% if type == 'ticket' %}
+                <div class="border border-secondary rounded container mb-2">
+                <h3>Ticket</h3>
+                {% for field in ticket_form %}
+                    <div class="mb-2">
+                        <label for="{{field.label.id_for_label}}">{{ field.label }}</label>
+                        <div>
+                            {{ field }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            {% elif type == "review" %}
+                <div class="border border-secondary rounded container mb-2">
+                <h3>Ticket</h3>
+                {% for field in ticket_form %}
+                    <div class="mb-2">
+                        <label for="{{field.label.id_for_label}}">{{ field.label }}</label>
+                        <div>
+                            {{ field }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+                <div class="border border-secondary rounded container mb-2 justify-content-start">
+                <h3>Critique</h3>
+                {% for field in review_form %}
+                    {% if field.label == 'Note' %}
+                        <div>
+                            <label>{{ field.label }}</label>
+                            <div>
+                                {% for rate in field %}
+                                    {{rate}}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% else %}
+                        <div>
+                            <label>{{ field.label }}</label>
                             <div>
                                 {{ field }}
                             </div>
                         </div>
-                    {% endfor %}
-                </div>
-                {% elif type == "review" %}
-                    <div class="border border-secondary rounded container mb-2">
-                    <h3>Ticket</h3>
-                    {% for field in ticket_form %}
-                        <div class="mb-2">
-                            <label for="{{field.label.id_for_label}}">{{ field.label }}</label>
-                            <div>
-                                {{ field }}
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-                    <div class="border border-secondary rounded container mb-2 justify-content-start">
-                    <h3>Critique</h3>
-                    {% for field in review_form %}
-                        {% if field.label == 'Note' %}
-                            <div>
-                                <label>{{ field.label }}</label>
-                                <div>
-                                    {% for rate in field %}
-                                        {{rate}}
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        {% else %}
-                            <div>
-                                <label>{{ field.label }}</label>
-                                <div>
-                                    {{ field }}
-                                </div>
-                            </div>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-                {% endif %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+            {% endif %}
 
-                <div class="text-right mb-2">
-                    <a href="/flux/posts" class="btn btn-outline-primary">Retour</a>
-                    <input type="submit" name="update" value="Update" class="btn btn-primary" />
-                    <a href="delete?id={{current_ticket.id}}&type=ticket" class="btn btn-danger">
-                        Supprimer
-                    </a>
-                </div>
-            </form>
-        </div>
-    {% endif %}
+            <div class="text-right mb-2">
+                <a href="/flux/posts" class="btn btn-outline-primary">Retour</a>
+                <input type="submit" name="update" value="Update" class="btn btn-primary" />
+                <a href="delete?id={{current_ticket.id}}&type=ticket" class="btn btn-danger">
+                    Supprimer
+                </a>
+            </div>
+        </form>
+    </div>
 {% endblock %}

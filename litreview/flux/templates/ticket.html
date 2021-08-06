@@ -2,32 +2,26 @@
 {% load static %}
 
 {% block content %}
-    {% if not user.is_authenticated %}
-        <div class="row justify-content-center alert alert-warning">
-            <p>Veuillez <a href="../">vous connecter</a> pour accéder à ce contenu.</p>
-        </div>
-    {% else %}
-        <div class="container border border-secondary rounded w-75 mb-2">
-            <h1 class="text-center">Créez un ticket</h1>
+    <div class="container border border-secondary rounded w-75 mb-2">
+        <h1 class="text-center">Créez un ticket</h1>
 
-            {% for message in messages %}
-                <p class="alert alert-warning text-center">{{ message }}</p>
-            {% endfor %}
-            <form method="post" action="{% url 'ticket' %}" enctype="multipart/form-data">
-                {% csrf_token %}
-                <div class="container justify-content-start">
-                    {% for field in ticket_form %}
-                        <label class="mt-2" for="{{ field.label.id_for_label }}">{{ field.label }}</label>
-                        <div>
-                            {{ field }}
-                        </div>
-                    {% endfor %}
-                </div>
-                <div class="container text-right mt-2 mb-2">
-                    <a href="/flux" class="btn btn-outline-primary">Annuler</a>
-                    <input type="submit" value="Demander une critique" class="btn btn-primary">
-                </div>
-            </form>
-        </div>
-    {% endif %}
+        {% for message in messages %}
+            <p class="alert alert-warning text-center">{{ message }}</p>
+        {% endfor %}
+        <form method="post" action="{% url 'ticket' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="container justify-content-start">
+                {% for field in ticket_form %}
+                    <label class="mt-2" for="{{ field.label.id_for_label }}">{{ field.label }}</label>
+                    <div>
+                        {{ field }}
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="container text-right mt-2 mb-2">
+                <a href="/flux" class="btn btn-outline-primary">Annuler</a>
+                <input type="submit" value="Demander une critique" class="btn btn-primary">
+            </div>
+        </form>
+    </div>
 {% endblock %}
